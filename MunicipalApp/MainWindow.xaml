@@ -1,0 +1,29 @@
+﻿<Window x:Class="MunicipalApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Municipal App" Height="350" Width="525" 
+        Background="LightGray">
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
+            <!-- Report Issues Button -->
+            <Button x:Name="btnReportIssues" Content="Report Issues" 
+                    Width="200" Height="50" Click="btnReportIssues_Click"
+                    Background="SkyBlue" Foreground="White" FontWeight="Bold"
+                    Margin="10"/>
+
+            <!-- Local Events and Announcements Button (Disabled) -->
+            <Button Content="Local Events and Announcements" 
+                    Width="200" Height="50" IsEnabled="False"
+                    Background="Gray" Foreground="DarkGray" FontWeight="Bold" 
+                    Margin="10"/>
+
+            <!-- Service Request Status Button (Disabled) -->
+            <Button Content="Service Request Status" 
+                    Width="200" Height="50" IsEnabled="False"
+                    Background="Gray" Foreground="DarkGray" FontWeight="Bold"
+                    Margin="10"/>
+        </StackPanel>
+    </Grid>
+</Window>
+

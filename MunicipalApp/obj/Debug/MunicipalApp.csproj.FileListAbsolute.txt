@@ -1,0 +1,17 @@
+C:\Users\hlogi\Downloads\MunicipalApp\bin\Debug\MunicipalApp.exe.config
+C:\Users\hlogi\Downloads\MunicipalApp\bin\Debug\MunicipalApp.exe
+C:\Users\hlogi\Downloads\MunicipalApp\bin\Debug\MunicipalApp.pdb
+C:\Users\hlogi\Downloads\MunicipalApp\obj\Debug\MunicipalApp.csproj.AssemblyReference.cache
+C:\Users\hlogi\Downloads\MunicipalApp\obj\Debug\MunicipalApp.csproj.SuggestedBindingRedirects.cache
+C:\Users\hlogi\Downloads\MunicipalApp\obj\Debug\MainWindow.baml
+C:\Users\hlogi\Downloads\MunicipalApp\obj\Debug\Reportissues.baml
+C:\Users\hlogi\Downloads\MunicipalApp\obj\Debug\MainWindow.g.cs
+C:\Users\hlogi\Downloads\MunicipalApp\obj\Debug\Reportissues.g.cs
+C:\Users\hlogi\Downloads\MunicipalApp\obj\Debug\App.g.cs
+C:\Users\hlogi\Downloads\MunicipalApp\obj\Debug\MunicipalApp_MarkupCompile.cache
+C:\Users\hlogi\Downloads\MunicipalApp\obj\Debug\MunicipalApp.g.resources
+C:\Users\hlogi\Downloads\MunicipalApp\obj\Debug\MunicipalApp.Properties.Resources.resources
+C:\Users\hlogi\Downloads\MunicipalApp\obj\Debug\MunicipalApp.csproj.GenerateResource.cache
+C:\Users\hlogi\Downloads\MunicipalApp\obj\Debug\MunicipalApp.csproj.CoreCompileInputs.cache
+C:\Users\hlogi\Downloads\MunicipalApp\obj\Debug\MunicipalApp.exe
+C:\Users\hlogi\Downloads\MunicipalApp\obj\Debug\MunicipalApp.pdb
