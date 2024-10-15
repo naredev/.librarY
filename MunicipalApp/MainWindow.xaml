@@ -12,10 +12,10 @@
                     Background="SkyBlue" Foreground="White" FontWeight="Bold"
                     Margin="10"/>
 
-            <!-- Local Events and Announcements Button (Disabled) -->
-            <Button Content="Local Events and Announcements" 
-                    Width="200" Height="50" IsEnabled="False"
-                    Background="Gray" Foreground="DarkGray" FontWeight="Bold" 
+            <!-- Local Events and Announcements Button (Enabled Part 2) -->
+            <Button x:Name="btnLocalEvents" Content="Local Events and Announcements" 
+                    Width="200" Height="50" Click="btnLocalEvents_Click"
+                    Background="BlueViolet" Foreground="White" FontWeight="Bold" 
                     Margin="10"/>
 
             <!-- Service Request Status Button (Disabled) -->

@@ -1,34 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
 namespace MunicipalApp
 {
+    public partial class MainWindow : Window
+    {
+        private EventService eventService;
 
-        public partial class MainWindow : Window
+
+        public MainWindow()
         {
-            public MainWindow()
-            {
-                InitializeComponent();
-            }
+            InitializeComponent();
 
-            private void btnReportIssues_Click(object sender, RoutedEventArgs e)
-            {
-                // Open the Report Issues window
-                Reportissues reportIssuesWindow = new Reportissues();
-                reportIssuesWindow.Show();
-            }
+            eventService = new EventService();
+        }
+
+        private void btnReportIssues_Click(object sender, RoutedEventArgs e)
+        {
+            // Open the Report Issues window
+            Reportissues reportIssuesWindow = new Reportissues();
+            reportIssuesWindow.Show();
+        }
+
+        private void btnLocalEvents_Click(object sender, RoutedEventArgs e)
+        {
+            // Pass the eventService to the LocalEvents window
+            LocalEvents localEventsWindow = new LocalEvents(eventService);
+            localEventsWindow.Show();
+            this.Close();
         }
     }
-
+}
