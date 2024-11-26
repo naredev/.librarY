@@ -4,96 +4,121 @@ using System.Linq;
 
 namespace MunicipalApp
 {
-
     public class EventService
     {
-        SortedDictionary<DateTime, List<Event>> eventsByDate = new SortedDictionary<DateTime, List<Event>>();
-        HashSet<string> categories = new HashSet<string>();
-        
-        //Part of this code was adopted from StackOverflow
-        //https://stackoverflow.com/questions/17009741/in-c-what-is-the-best-way-to-convert-a-listt-to-a-sorteddictionarystring-t
-        //Accesed 10 October 2024
+        private SortedDictionary<DateTime, List<Event>> eventsByDate = new SortedDictionary<DateTime, List<Event>>();
+        private HashSet<string> categories = new HashSet<string>();
+        private Stack<Event> recentEvents = new Stack<Event>();
+        private Queue<Event> upcomingEvents = new Queue<Event>();
+        private SortedSet<DateTime> uniqueEventDates = new SortedSet<DateTime>();
+        private Dictionary<string, List<Event>> eventsByCategory = new Dictionary<string, List<Event>>();
 
         public void InitializeEvents()
         {
-            // Add events to the collection
+            // Add initial events
             AddEvent(new Event("Community Cleanup", "Sanitation", new DateTime(2024, 10, 18), "Join us for a community cleanup event."));
             AddEvent(new Event("King Monada Annual Music Festival", "Arts", new DateTime(2024, 12, 1), "Re ya Monadene"));
-            AddEvent(new Event("Electricity Price Update", "Utilities", new DateTime(2024, 11, 29), "Latest update on the electric fees"));
+            AddEvent(new Event("Electricity Price Update", "Utilities", new DateTime(2024, 11, 29), "Latest update on the electric fees."));
             AddEvent(new Event("Water Supply Update", "Utilities", new DateTime(2024, 10, 20), "Latest updates on the water supply."));
         }
 
         public void AddEvent(Event newEvent)
         {
-            // Add the event to the dictionary by date
+            // Add to sorted dictionary
             if (!eventsByDate.ContainsKey(newEvent.Date))
             {
                 eventsByDate[newEvent.Date] = new List<Event>();
             }
             eventsByDate[newEvent.Date].Add(newEvent);
 
-            // Add unique category to the category HashSet
+            // Add to category dictionary
+            if (!eventsByCategory.ContainsKey(newEvent.Category))
+            {
+                eventsByCategory[newEvent.Category] = new List<Event>();
+            }
+            eventsByCategory[newEvent.Category].Add(newEvent);
+
+            // Add to hash set of categories
             categories.Add(newEvent.Category);
+
+            // Add to recent events stack
+            recentEvents.Push(newEvent);
+
+            // Add to upcoming events queue if the date is in the future
+            if (newEvent.Date > DateTime.Now)
+            {
+                upcomingEvents.Enqueue(newEvent);
+            }
+
+            // Add to sorted set of unique dates
+            uniqueEventDates.Add(newEvent.Date);
         }
 
-
-        // Method to retrieve events based on search terms
+        // Search for events with filters
         public List<Event> SearchEvents(string searchTerm, string category, DateTime? date)
         {
-            return eventsByDate.Values.SelectMany(events => events)
-                .Where(evt => (string.IsNullOrEmpty(searchTerm) || evt.Name.ToLower().Contains(searchTerm)) &&
-                              (string.IsNullOrEmpty(category) || evt.Category == category) &&
-                              (!date.HasValue || evt.Date.Date == date.Value.Date))
+            if (!eventsByDate.Any())
+                return new List<Event>();
+
+            return eventsByDate.Values.SelectMany(e => e)
+                .Where(e =>
+                    (string.IsNullOrEmpty(searchTerm) || (e.Name?.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0)) &&
+                    (string.IsNullOrEmpty(category) || e.Category.Equals(category, StringComparison.OrdinalIgnoreCase)) &&
+                    (!date.HasValue || e.Date.Date.Equals(date.Value.Date)))
                 .ToList();
         }
 
-        // Method to recommend events based on search history
-        public List<Event> GetRecommendedEvents(string searchTerm)
+        // Recommendation feature based on user preferences
+        public List<Event> RecommendEvents(string searchTerm, string preferredCategory, DateTime? preferredDate)
         {
-            return eventsByDate.Values.SelectMany(events => events)
-                .Where(evt => evt.Name.ToLower().Contains(searchTerm))
-                .ToList();
+            var recommended = new List<Event>();
+
+            // If a category is preferred, suggest events in that category
+            if (!string.IsNullOrEmpty(preferredCategory) && eventsByCategory.ContainsKey(preferredCategory))
+            {
+                recommended.AddRange(eventsByCategory[preferredCategory]);
+            }
+
+            // Suggest events based on search term
+            recommended.AddRange(SearchEvents(searchTerm, null, null));
+
+            // Suggest events close to the preferred date
+            if (preferredDate.HasValue)
+            {
+                var closeDates = uniqueEventDates.GetViewBetween(preferredDate.Value.AddDays(-7), preferredDate.Value.AddDays(7));
+                foreach (var date in closeDates)
+                {
+                    recommended.AddRange(eventsByDate[date]);
+                }
+            }
+
+            // Remove duplicates and return
+            return recommended.Distinct().ToList();
         }
 
-        //Part of this code was adopted from StackOverflow
-        //https://stackoverflow.com/questions/29403810/a-hashset-contains-returning-an-object
-        //Accessed 10 October 2024
+        public List<Event> GetRecentEvents()
+        {
+            return recentEvents.ToList();
+        }
 
-        // Retrieve all categories
+        public List<Event> GetUpcomingEvents()
+        {
+            return upcomingEvents.ToList();
+        }
+
         public HashSet<string> GetCategories()
         {
             return categories;
         }
 
-        // Get earliest event date
         public DateTime? GetEarliestDate()
         {
-            if (eventsByDate != null && eventsByDate.Count > 0)
-            {
-                return eventsByDate.Keys.Min();
-            }
-            else
-            {
-                // Return null or a default value when no events exist
-                return null;
-            }
+            return uniqueEventDates.FirstOrDefault();
         }
 
-
-        // Get latest event date
         public DateTime? GetLatestDate()
         {
-            if (eventsByDate != null && eventsByDate.Count > 0)
-            {
-                return eventsByDate.Keys.Max();
-            }
-            else
-            {
-                // Return null or handle as needed
-                return null;
-            }
+            return uniqueEventDates.LastOrDefault();
         }
-
-
     }
 }

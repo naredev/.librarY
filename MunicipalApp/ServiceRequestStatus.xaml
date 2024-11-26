@@ -1,0 +1,39 @@
+﻿<Window x:Class="MunicipalApp.ServiceRequestStatus"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Service Request Status" Height="500" Width="700" Background="#F3F4F6">
+
+    <Grid Margin="20">
+        <StackPanel Orientation="Vertical" Margin="10">
+
+            <!-- Header -->
+            <TextBlock Text="Service Request Status" FontSize="24" FontWeight="Bold" Foreground="#2F4F4F"
+                       HorizontalAlignment="Center" Margin="0,0,0,20" />
+
+            <!-- Search Section -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
+                <TextBox x:Name="txtSearch" Width="250" Height="30" Text="Enter Request ID" 
+                         FontSize="14" Padding="5" Foreground="Gray" Background="#E8E8E8"
+                         BorderBrush="#A9A9A9" Margin="0,0,10,0"/>
+                <Button Content="Search" Width="100" Height="30" Click="btnSearch_Click"
+                        Background="#4CAF50" Foreground="White" FontSize="14" FontWeight="SemiBold"
+                        BorderBrush="#4CAF50" Padding="5,0"/>
+            </StackPanel>
+
+            <!-- DataGrid for Requests -->
+            <DataGrid x:Name="dataGridRequests" AutoGenerateColumns="False" Height="300" 
+                      Background="White" Foreground="Black" BorderBrush="#A9A9A9"
+                      RowBackground="#FFFFFF" AlternatingRowBackground="#F3F4F6"
+                      HorizontalGridLinesBrush="#D3D3D3" VerticalGridLinesBrush="#D3D3D3">
+
+                <!-- DataGrid Columns -->
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Request ID" Binding="{Binding RequestID}" Width="*" />
+                    <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*" />
+                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*" />
+                    <DataGridTextColumn Header="Date Submitted" Binding="{Binding DateSubmitted}" Width="*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+    </Grid>
+</Window>

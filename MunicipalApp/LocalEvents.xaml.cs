@@ -2,86 +2,98 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace MunicipalApp
 {
     public partial class LocalEvents : Window
     {
-        private EventService eventService;
-        private Queue<string> searchHistory = new Queue<string>();
+        private readonly EventService _eventService;
+        private readonly Queue<string> _searchHistory = new Queue<string>();
+        private const int MaxSearchHistorySize = 5;
 
         public LocalEvents(EventService service)
         {
             InitializeComponent();
-            eventService = service;
-            eventService.InitializeEvents(); // Initialize events here
+            _eventService = service ?? throw new ArgumentNullException(nameof(service));
+            _eventService.InitializeEvents();
             PopulateCategoriesAndDates();
         }
 
-
-        // Populate categories and dates into the combo box and date picker
-        public void PopulateCategoriesAndDates()
+        // Populate categories and dates into combo box and date picker
+        private void PopulateCategoriesAndDates()
         {
-            comboCategory.ItemsSource = eventService.GetCategories();
-            datePickerEventDate.DisplayDateStart = eventService.GetEarliestDate();
-            datePickerEventDate.DisplayDateEnd = eventService.GetLatestDate();
+            comboCategory.ItemsSource = _eventService.GetCategories();
+            datePickerEventDate.DisplayDateStart = _eventService.GetEarliestDate();
+            datePickerEventDate.DisplayDateEnd = _eventService.GetLatestDate();
         }
-
-        //Part of this code was adopted from StackOverflow
-        //https://stackoverflow.com/questions/7740426/c-sharp-how-to-use-the-eventhandler
-        //Accessed 12 October 2024
 
         // Search button click handler
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
-            string searchTerm = txtSearch.Text.ToLower();
+            string searchTerm = txtSearch.Text?.ToLower().Trim();
             string category = comboCategory.SelectedItem?.ToString();
             DateTime? selectedDate = datePickerEventDate.SelectedDate;
 
-            var results = eventService.SearchEvents(searchTerm, category, selectedDate);
-            lstEvents.ItemsSource = results.Select(evt => $"{evt.Name} - {evt.Date.ToShortDateString()}");
-
-            // Add search term to history
-            if (!string.IsNullOrEmpty(searchTerm))
+            if (string.IsNullOrWhiteSpace(searchTerm) && string.IsNullOrWhiteSpace(category) && !selectedDate.HasValue)
             {
-                searchHistory.Enqueue(searchTerm);
-                if (searchHistory.Count > 5)
-                {
-                    searchHistory.Dequeue(); // Limit history size
-                }
+                MessageBox.Show("Please enter a search term, select a category, or choose a date.", "Invalid Input");
+                return;
             }
 
-            RecommendEvents();
+            var results = _eventService.SearchEvents(searchTerm, category, selectedDate);
+            if (results.Any())
+            {
+                lstEvents.ItemsSource = results.Select(evt => $"{evt.Name} - {evt.Date:yyyy-MM-dd}");
+                AddToSearchHistory(searchTerm);
+                RecommendEvents();
+            }
+            else
+            {
+                MessageBox.Show("No events found matching your search criteria.", "No Results");
+            }
         }
 
-        //Part of this code was adopted from Wisej
-        //https://wisej.com/support/question/messagebox-with-event-handler
-        //Accessed 12 October 2024
-
-        // Event recommendation based on search history
-        public void RecommendEvents()
+        // Add search term to history
+        private void AddToSearchHistory(string searchTerm)
         {
-            if (searchHistory.Count > 0)
+            if (!string.IsNullOrEmpty(searchTerm))
             {
-                string lastSearch = searchHistory.Last();
-                var recommendedEvents = eventService.GetRecommendedEvents(lastSearch);
+                _searchHistory.Enqueue(searchTerm);
+                if (_searchHistory.Count > MaxSearchHistorySize)
+                {
+                    _searchHistory.Dequeue();
+                }
+            }
+        }
+
+        // Recommend events based on search history
+        // Recommend events based on search history
+        private void RecommendEvents()
+        {
+            if (_searchHistory.Any())
+            {
+                string lastSearch = _searchHistory.Last();
+                var recommendedEvents = _eventService.RecommendEvents(lastSearch, null, null);
 
                 if (recommendedEvents.Any())
                 {
                     MessageBox.Show("Recommended Events based on your search history:\n" +
-                                    string.Join("\n", recommendedEvents.Select(evt => evt.Name)));
+                                    string.Join("\n", recommendedEvents.Select(evt => evt.Name)), "Recommendations");
+                }
+                else
+                {
+                    MessageBox.Show("No recommendations available based on your search history.", "Recommendations");
                 }
             }
         }
 
+
         // Back button click handler
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow mainWindow = new MainWindow();
+            var mainWindow = new MainWindow();
             mainWindow.Show();
             this.Close();
         }
-
     }
 }
