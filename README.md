@@ -84,7 +84,6 @@ This project is licensed under the MIT License
 ---
 
 ## Contributors
-- Innovatio Systems
 - Lehlogonolo Moagi
 
 ---
